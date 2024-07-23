@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        // Replace with your actual AWS access key ID and secret access key
+        // Use Jenkins credentials to inject AWS access key ID and secret access key
         AWS_ACCESS_KEY_ID = credentials('aws-access-key-id')
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
     }
@@ -11,7 +11,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the source code from the private GitHub repository
-                git credentialsId: 'github-credentials-id', url: 'https://github.com/your-repo.git'
+                git credentialsId: 'github-credentials-id', url: 'https://github.com/bermetakub/CI-CD.git'
             }
         }
 
@@ -50,3 +50,4 @@ pipeline {
         }
     }
 }
+
