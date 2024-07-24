@@ -2,11 +2,9 @@ pipeline {
     agent any
 
     environment {
-        // Use Jenkins AWS credentials plugin to inject AWS access key ID and secret access key
-        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
-            AWS_ACCESS_KEY_ID = "${AWS_ACCESS_KEY_ID}"
-            AWS_SECRET_ACCESS_KEY = "${AWS_SECRET_ACCESS_KEY}"
-        }
+        // Use Jenkins credentials to inject AWS access key ID and secret access key
+        AWS_ACCESS_KEY_ID = credentials('aws-access-key-id')
+        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
     }
 
     stages {
@@ -48,24 +46,46 @@ pipeline {
         stage('Terraform Init') {
             steps {
                 // Initialize Terraform
-                sh 'terraform init'
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-credentials',
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                ]]) {
+                    sh 'terraform init'
+                }
             }
         }
 
         stage('Terraform Plan') {
             steps {
                 // Run Terraform plan
-                sh 'terraform plan'
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-credentials',
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                ]]) {
+                    sh 'terraform plan'
+                }
             }
         }
 
         stage('Terraform Apply') {
             steps {
                 // Apply the Terraform plan
-                sh 'terraform apply -auto-approve'
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-credentials',
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                ]]) {
+                    sh 'terraform apply -auto-approve'
+                }
             }
         }
     }
 }
+
 
 
