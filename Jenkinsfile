@@ -10,8 +10,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the source code from the private GitHub repository using SSH
-                git credentialsId: 'jenkins', url: 'git@github.com:bermetakub/CI-CD.git'
+                // Checkout the source code from the private GitHub repository
+                git credentialsId: 'github-credentials-id', url: 'https://github.com/bermetakub/CI-CD.git'
             }
         }
 
@@ -50,3 +50,4 @@ pipeline {
         }
     }
 }
+
