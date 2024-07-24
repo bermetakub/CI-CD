@@ -8,20 +8,20 @@ pipeline {
     }
 
     stages {
-    #    stage('Install Git') {
-    #        steps {
-    #            // Install Git if not already installed
-    #            sh '''
-    #            if ! command -v git &> /dev/null; then
-    #              echo "Git is not installed. Installing Git..."
-    #              sudo apt update -y
-    #              sudo apt install git -y
-    #            else
-    #              echo "Git is already installed."
-    #            fi
-    #            '''
-    #        }
-    #    }
+        stage('Install Git') {
+            steps {
+                // Install Git if not already installed
+                sh '''
+                if ! command -v git &> /dev/null; then
+                  echo "Git is not installed. Installing Git..."
+                  sudo apt update -y
+                  sudo apt install git -y
+                else
+                  echo "Git is already installed."
+                fi
+                '''
+            }
+        }
 
         stage('Checkout') {
             steps {
