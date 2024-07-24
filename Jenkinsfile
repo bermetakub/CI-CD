@@ -8,6 +8,7 @@ pipeline {
         PATH = "${TERRAFORM_BIN}:${env.PATH}"
     }
 
+    stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', credentialsId: 'jenkins-private-repo', url: 'https://github.com/bermetakub/CI-CD.git'
@@ -77,6 +78,7 @@ pipeline {
         }
     }
 }
+
 
 
 
