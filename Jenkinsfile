@@ -47,7 +47,7 @@ pipeline {
                 sh '''
                 if ! command -v terraform &> /dev/null; then
                   echo "Terraform is not installed. Installing Terraform..."
-                  sudo mkdir -p /home/jenkins/bin
+                  mkdir -p /home/jenkins/bin
                   wget https://releases.hashicorp.com/terraform/1.0.0/terraform_1.0.0_linux_amd64.zip -O /tmp/terraform.zip
                   sudo unzip -o /tmp/terraform.zip -d /home/jenkins/bin
                   echo "export PATH=/home/jenkins/bin:$PATH" >> ~/.bashrc
@@ -68,7 +68,7 @@ pipeline {
                     accessKeyVariable: 'AWS_ACCESS_KEY_ID',
                     secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
                 ]]) {
-                    sh 'terraform init'
+                    sh '${TERRAFORM_BIN}/terraform init'
                 }
             }
         }
@@ -82,7 +82,7 @@ pipeline {
                     accessKeyVariable: 'AWS_ACCESS_KEY_ID',
                     secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
                 ]]) {
-                    sh 'terraform plan'
+                    sh '${TERRAFORM_BIN}/terraform plan'
                 }
             }
         }
@@ -96,7 +96,7 @@ pipeline {
                     accessKeyVariable: 'AWS_ACCESS_KEY_ID',
                     secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
                 ]]) {
-                    sh 'terraform apply -auto-approve'
+                    sh '${TERRAFORM_BIN}/terraform apply -auto-approve'
                 }
             }
         }
@@ -114,5 +114,6 @@ pipeline {
         }
     }
 }
+
 
 
