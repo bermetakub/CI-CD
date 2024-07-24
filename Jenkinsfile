@@ -8,21 +8,6 @@ pipeline {
         PATH = "${TERRAFORM_BIN}:${env.PATH}"
     }
 
-    stages {
-        stage('Install Git') {
-            steps {
-                sh '''
-                if ! command -v git &> /dev/null; then
-                  echo "Git is not installed. Installing Git..."
-                  sudo apt update -y
-                  sudo apt install git -y
-                else
-                  echo "Git is already installed."
-                fi
-                '''
-            }
-        }
-
         stage('Checkout') {
             steps {
                 git branch: 'main', credentialsId: 'jenkins-private-repo', url: 'https://github.com/bermetakub/CI-CD.git'
@@ -37,22 +22,6 @@ pipeline {
                         env.AWS_SECRET_ACCESS_KEY = "${AWS_SECRET_ACCESS_KEY}"
                     }
                 }
-            }
-        }
-
-        stage('Install Terraform') {
-            steps {
-                // Install Terraform if not already installed
-                sh '''
-                if ! command -v terraform &> /dev/null; then
-                  echo "Terraform is not installed. Installing Terraform..."
-                  sudo mkdir -p /home/jenkins/bin
-                  wget https://releases.hashicorp.com/terraform/1.0.0/terraform_1.0.0_linux_amd64.zip -O /tmp/terraform.zip
-                  sudo unzip -o /tmp/terraform.zip -d /home/jenkins/bin
-                else
-                  echo "Terraform is already installed."
-                fi
-                '''
             }
         }
 
