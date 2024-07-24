@@ -48,7 +48,8 @@ pipeline {
                 if ! command -v terraform &> /dev/null; then
                   echo "Terraform is not installed. Installing Terraform..."
                   sudo mkdir -p /home/jenkins/bin
-                  wget https://releases.hashicorp.com/terraform/1.0.0/terraform_1.0.0_linux_amd64.zip -O /tmp/terraform.zip
+                  wget https://releases.hashicorp.com/terraform/1.0.0/terraform_1.0.0_linux_amd64.zip
+                  mv terraform_1.0.0_linux_amd64.zip /tmp/terraform.zip
                   sudo unzip -o /tmp/terraform.zip -d /home/jenkins/bin
                   echo "export PATH=/home/jenkins/bin:$PATH" >> ~/.bashrc
                   source ~/.bashrc
