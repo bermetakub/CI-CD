@@ -4,6 +4,7 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID = ''
         AWS_SECRET_ACCESS_KEY = ''
+        TERRAFORM_BIN = '/home/jenkins/bin'
     }
 
     stages {
@@ -46,12 +47,15 @@ pipeline {
                 sh '''
                 if ! command -v terraform &> /dev/null; then
                   echo "Terraform is not installed. Installing Terraform..."
+                  mkdir -p $TERRAFORM_BIN
                   wget https://releases.hashicorp.com/terraform/1.0.0/terraform_1.0.0_linux_amd64.zip -O /tmp/terraform.zip
-                  unzip -o /tmp/terraform.zip -d /usr/local/bin/
+                  unzip -o /tmp/terraform.zip -d $TERRAFORM_BIN
                   if [ $? -ne 0 ]; then
                     echo "Failed to unzip Terraform."
                     exit 1
                   fi
+                  echo "export PATH=$TERRAFORM_BIN:$PATH" >> ~/.bashrc
+                  source ~/.bashrc
                 else
                   echo "Terraform is already installed."
                 fi
@@ -114,4 +118,5 @@ pipeline {
         }
     }
 }
+
 
