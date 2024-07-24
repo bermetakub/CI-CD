@@ -13,8 +13,8 @@ pipeline {
                 sh '''
                 if ! command -v git &> /dev/null; then
                   echo "Git is not installed. Installing Git..."
-                  sudo apt update
-                  sudo apt install git -y
+                  sudo yum update -y
+                  sudo yum install git -y
                 else
                   echo "Git is already installed."
                 fi
@@ -45,9 +45,15 @@ pipeline {
                 // Install Terraform if not already installed
                 sh '''
                 if ! command -v terraform &> /dev/null; then
-                  wget https://releases.hashicorp.com/terraform/1.0.0/terraform_1.0.0_linux_amd64.zip
-                  unzip terraform_1.0.0_linux_amd64.zip
-                  sudo mv terraform /usr/local/bin/
+                  echo "Terraform is not installed. Installing Terraform..."
+                  wget https://releases.hashicorp.com/terraform/1.0.0/terraform_1.0.0_linux_amd64.zip -O /tmp/terraform.zip
+                  unzip -o /tmp/terraform.zip -d /usr/local/bin/
+                  if [ $? -ne 0 ]; then
+                    echo "Failed to unzip Terraform."
+                    exit 1
+                  fi
+                else
+                  echo "Terraform is already installed."
                 fi
                 '''
             }
@@ -95,7 +101,17 @@ pipeline {
             }
         }
     }
+
+    post {
+        always {
+            echo 'Pipeline has completed.'
+        }
+        success {
+            echo 'Pipeline succeeded.'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
 }
-
-
 
