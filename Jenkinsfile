@@ -5,6 +5,7 @@ pipeline {
         AWS_ACCESS_KEY_ID = ''
         AWS_SECRET_ACCESS_KEY = ''
         TERRAFORM_BIN = '/home/jenkins/bin'
+        PATH = "${TERRAFORM_BIN}:${env.PATH}"
     }
 
     stages {
