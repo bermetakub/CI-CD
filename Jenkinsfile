@@ -2,16 +2,33 @@ pipeline {
     agent any
 
     environment {
-        // Use Jenkins credentials to inject AWS access key ID and secret access key
-        AWS_ACCESS_KEY_ID = credentials('aws-access-key-id')
-        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
+        // Use Jenkins AWS credentials plugin to inject AWS access key ID and secret access key
+        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
+            AWS_ACCESS_KEY_ID = "${AWS_ACCESS_KEY_ID}"
+            AWS_SECRET_ACCESS_KEY = "${AWS_SECRET_ACCESS_KEY}"
+        }
     }
 
     stages {
+        stage('Install Git') {
+            steps {
+                // Install Git if not already installed
+                sh '''
+                if ! command -v git &> /dev/null; then
+                  echo "Git is not installed. Installing Git..."
+                  sudo apt update
+                  sudo apt install git -y
+                else
+                  echo "Git is already installed."
+                fi
+                '''
+            }
+        }
+
         stage('Checkout') {
             steps {
                 // Checkout the source code from the private GitHub repository
-                git credentialsId: 'jenkins-private-repo', url: 'https://github.com/bermetakub/CI-CD.git'
+                git branch: 'main', credentialsId: 'jenkins-private-repo', url: 'https://github.com/bermetakub/CI-CD.git'
             }
         }
 
@@ -50,4 +67,5 @@ pipeline {
         }
     }
 }
+
 
