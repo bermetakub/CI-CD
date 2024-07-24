@@ -13,8 +13,8 @@ pipeline {
                 sh '''
                 if ! command -v git &> /dev/null; then
                   echo "Git is not installed. Installing Git..."
-                  sudo yum update
-                  sudo yum install git -y
+                  sudo apt update
+                  sudo apt install git -y
                 else
                   echo "Git is already installed."
                 fi
@@ -26,6 +26,17 @@ pipeline {
             steps {
                 // Checkout the source code from the private GitHub repository
                 git branch: 'main', credentialsId: 'jenkins-private-repo', url: 'https://github.com/bermetakub/CI-CD.git'
+            }
+        }
+
+        stage('Setup AWS Credentials') {
+            steps {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
+                    script {
+                        env.AWS_ACCESS_KEY_ID = "${AWS_ACCESS_KEY_ID}"
+                        env.AWS_SECRET_ACCESS_KEY = "${AWS_SECRET_ACCESS_KEY}"
+                    }
+                }
             }
         }
 
