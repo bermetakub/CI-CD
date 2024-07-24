@@ -7,7 +7,7 @@ pipeline {
         TERRAFORM_BIN = '/home/jenkins/bin'
     }
 
-    #stages {
+    stages {
     #    stage('Install Git') {
     #        steps {
     #            // Install Git if not already installed
