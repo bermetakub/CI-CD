@@ -14,8 +14,8 @@ pipeline {
                 sh '''
                 if ! command -v git &> /dev/null; then
                   echo "Git is not installed. Installing Git..."
-                  sudo yum update -y
-                  sudo yum install git -y
+                  sudo apt update -y
+                  sudo apt install git -y
                 else
                   echo "Git is already installed."
                 fi
