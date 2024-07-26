@@ -1,48 +1,45 @@
 pipeline {
-    agent { label 'docker' } // Use the label of your agent
-
-    parameters {
-        string(name: 'VERSION', defaultValue: 'latest', description: 'Docker image version')
+    agent {
+        label 'docker-agent' // Replace with your agent label
     }
-
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds') // Replace with your DockerHub credentials ID
     }
-
+    parameters {
+        string(name: 'VERSION', defaultValue: 'latest', description: 'Version number for tagging the Docker image')
+    }
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
-
         stage('Build Docker Image') {
             steps {
                 script {
-                    def app = docker.build("alymkulovabk/sonnet-scenes:${params.VERSION}")
+                    def dockerImage = docker.build("alymkulovabk/simplepage:${params.VERSION}", "-f Dockerfile .")
                 }
             }
         }
-
-        stage('Push Docker Image') {
+        stage('Login to DockerHub') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'DOCKERHUB_CREDENTIALS') {
-                        def app = docker.image("alymkulovabk/sonnet-scenes:${params.VERSION}")
-                        app.push()
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-creds') {
+                        def dockerImage = docker.image("alymkulovabk/simplepage:${params.VERSION}")
+                        dockerImage.push()
                     }
                 }
             }
         }
     }
-
     post {
-        success {
-            echo 'The Docker image has been built and pushed successfully.'
-        }
         failure {
-            echo 'The build or push process failed.'
+            echo 'The build failed.'
+        }
+        success {
+            echo 'The build and push were successful.'
         }
     }
 }
+
 
