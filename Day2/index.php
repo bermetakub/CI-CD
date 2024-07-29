@@ -16,7 +16,7 @@
             font-family: Arial, sans-serif;
         }
         h1 {
-            font-size: 3em;
+            font-size: 6em;
         }
     </style>
 </head>
