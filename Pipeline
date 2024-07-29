@@ -1,0 +1,39 @@
+@Library('my-shared-library') _
+pipeline {
+    agent {
+        label 'docker'
+    }
+    parameters {
+        string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Git branch to build')
+        choice(name: 'ENVIRONMENT', choices: ['development', 'staging', 'production'], description: 'Deployment environment')
+        string(name: 'DEPLOY_TARGET', description: 'Target server for deployment')
+    }
+    environment {
+        GITHUB_CREDENTIALS = credentials('jenkins-private-repo')
+    }
+    stages {
+        stage('Checkout Code') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'jenkins-private-repo', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+                    git branch: "${params.BRANCH_NAME}", url: "https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/bermetakub/CI-CD.git"
+                }
+            }
+        }
+        stage('Build and Push Docker Image') {
+            steps {
+                script {
+                    def imageName = "alymkulovabk/simpleapp:${params.BRANCH_NAME}-${params.ENVIRONMENT}"
+                    dockerBuildAndPush(imageName)
+                }
+            }
+        }
+        stage('Deploy Application') {
+            steps {
+                script {
+                    def imageName = "alymkulovabk/simpleapp:${params.BRANCH_NAME}-${params.ENVIRONMENT}"
+                    deployApp(params.DEPLOY_TARGET, imageName)
+                }
+            }
+        }
+    }
+}

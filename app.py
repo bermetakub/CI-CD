@@ -30,7 +30,7 @@ html_template = '''
 <body>
     <div class="message">
         Hello Bermet! Amazing progress so far.<br>
-        You're doing awesome! Keep up the fantastic work My Dear!
+        You're doing awesome! Keep up the fantastic work!
     </div>
 </body>
 </html>
